@@ -8,11 +8,21 @@ export default function Home() {
   const [language, setLanguage] = useState<string | null>("Select language");
   const [isopen, setIsOpen] = useState(false);
   const [displaymessage, setDisplayMessage] = useState("Please select a language");
+  const [currentRepos , setCurrentRepos] = useState<any[]>([]); 
 
   function changeTheTitle(selectedLanguage: string) {
-    setLanguage(selectedLanguage);
-    setIsOpen(false);
-    setDisplayMessage(`Fetching random repo for  ${selectedLanguage}`);
+    fetch(`https://api.github.com/search/repositories?q=language:${selectedLanguage}&sort=stars&order=desc&page=2&per_page=30`)
+    .then((response) => response.json())
+    .then((data) => {
+      const items = data.items;
+      const randomIndex = Math.floor(Math.random()*items.length);
+      const randomRepo = items[randomIndex];
+      console.log(randomRepo);
+      setDisplayMessage(`Link of the Repo : ${randomRepo.html_url}`)
+    })
+   setLanguage(selectedLanguage);
+   setIsOpen(false)
+   setDisplayMessage(`finding the github repo for ${selectedLanguage}`)
   }
   function toggledropdown() {
     setIsOpen(!isopen);
